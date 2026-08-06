@@ -10,9 +10,9 @@ export const PasswordScene = {
     this.entered = '';
     const { character, characterBoy } = ctx;
 
-    // boy alone, in roughly Scene 1's original spot; girl hidden
-    gsap.set(character, { opacity: 0 });
-    gsap.set(characterBoy, { opacity: 1, x: 0, y: 0, rotate: 0, left: '4%', height: '46%' });
+    // boy + girl together (hugging), per the reference video
+    gsap.set(character, { opacity: 1, x: 0, y: 0, rotate: 0, left: '2%', height: '44%' });
+    gsap.set(characterBoy, { opacity: 1, x: 0, y: 0, rotate: 0, left: '15%', height: '44%' });
 
     const wrap = document.createElement('div');
     wrap.className = 'password-wrap';

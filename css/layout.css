@@ -130,6 +130,135 @@
   font-size: 12px;
 }
 
+/* ---------- gift boxes ---------- */
+.gift-row {
+  position: absolute;
+  left: 50%; bottom: 14%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: clamp(14px, 4vw, 34px);
+}
+
+.gift-box {
+  width: clamp(64px, 12vw, 96px);
+  height: clamp(64px, 12vw, 96px);
+  position: relative;
+  border-style: solid;
+  border-width: 8px;
+  border-image-slice: 8;
+  border-image-repeat: stretch;
+  image-rendering: pixelated;
+  box-shadow: 3px 5px 0 rgba(61, 45, 41, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-box::after {
+  content: '';
+  position: absolute;
+  inset: 0 42% 0 42%;
+  background: var(--color-ink);
+  opacity: 0.85;
+}
+.gift-box::before {
+  content: '';
+  position: absolute;
+  inset: 42% 0 42% 0;
+  background: var(--color-ink);
+  opacity: 0.85;
+}
+
+.gift-box--song  { background: var(--color-peach);   border-image-source: url('../assets/sprites/ui/button-cream-9slice.png'); }
+.gift-box--photos{ background: var(--color-lavender); border-image-source: url('../assets/sprites/ui/button-cream-9slice.png'); }
+.gift-box--message{ background: var(--color-pink);    border-image-source: url('../assets/sprites/ui/button-pink-9slice.png'); }
+
+.gift-box.is-opened { opacity: 0.45; pointer-events: none; }
+
+/* ---------- content overlay (letter / photos / song) ---------- */
+.content-overlay {
+  position: absolute; inset: 6% 8%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.letter-paper {
+  background: var(--color-paper);
+  border: 6px solid var(--color-ink);
+  box-shadow: 0 6px 0 rgba(61,45,41,0.2);
+  padding: 22px 26px;
+  max-width: 480px;
+  max-height: 80%;
+  overflow-y: auto;
+  font-family: var(--font-body);
+  font-size: clamp(16px, 2.4vw, 20px);
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.envelope {
+  width: 140px; height: 96px;
+  background: var(--color-pink);
+  border: 5px solid var(--color-ink);
+  position: relative;
+}
+.envelope::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 49%, var(--color-ink) 49.5%, var(--color-ink) 50.5%, transparent 51%),
+              linear-gradient(45deg, transparent 49%, var(--color-ink) 49.5%, var(--color-ink) 50.5%, transparent 51%);
+}
+.envelope-seal {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px; height: 26px;
+  z-index: 2;
+}
+
+.photo-frame {
+  background: var(--color-paper);
+  border: 4px solid var(--color-ink);
+  padding: 10px 10px 24px;
+  box-shadow: 2px 4px 0 rgba(61,45,41,0.2);
+  width: clamp(110px, 22vw, 160px);
+  transform: rotate(var(--tilt, -3deg));
+}
+.photo-frame__inner {
+  aspect-ratio: 4/5;
+  background: repeating-linear-gradient(45deg, var(--color-lavender), var(--color-lavender) 8px, var(--color-cream) 8px, var(--color-cream) 16px);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-body); color: var(--color-shadow); font-size: 12px; text-align: center; padding: 6px;
+}
+
+.player-panel {
+  background: var(--color-lavender);
+  border: 6px solid var(--color-ink);
+  box-shadow: 0 6px 0 rgba(61,45,41,0.2);
+  padding: 24px;
+  display: flex; align-items: center; gap: 20px;
+  max-width: 420px;
+}
+.player-disc {
+  width: 70px; height: 70px; border-radius: 50%;
+  background: var(--color-ink);
+  border: 4px solid var(--color-paper);
+  position: relative; flex-shrink: 0;
+}
+.player-disc::after {
+  content: ''; position: absolute; inset: 30%;
+  border-radius: 50%; background: var(--color-shadow);
+}
+
+.close-x {
+  position: absolute; top: -14px; right: -14px;
+  width: 32px; height: 32px;
+  background: var(--color-pink);
+  border: 4px solid var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-display);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+
 /* ---------- scene UI (scene-specific content mounts here) ---------- */
 #scene-ui {
   position: absolute;

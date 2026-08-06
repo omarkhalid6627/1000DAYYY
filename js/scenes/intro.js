@@ -91,7 +91,7 @@ export const IntroScene = {
       const { camera, character, particles, sceneManager } = this.ctx;
       const tl = gsap.timeline({
         onComplete: () => {
-          sceneManager.transitionTo('letter');
+          sceneManager.transitionTo('gift');
           resolve();
         },
       });
