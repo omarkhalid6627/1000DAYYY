@@ -4,6 +4,11 @@ export const IntroScene = {
 
   async init(ctx) {
     this.ctx = ctx;
+    // this scene owns the original solo-girl staging; restore it explicitly
+    // in case we arrived here from a scene that repositioned/hid characters
+    gsap.set(ctx.character, { opacity: 1, x: 0, y: 0, rotate: 0, left: '4%', height: '46%' });
+    gsap.set(ctx.characterBoy, { opacity: 0 });
+
     const wrap = document.createElement('div');
     wrap.className = 'intro-wrap';
     wrap.style.cssText = `

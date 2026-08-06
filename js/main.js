@@ -3,6 +3,8 @@ import { ParticleSystem } from './particles.js';
 import { CameraController } from './camera.js';
 import { SceneManager } from './sceneManager.js';
 import { IntroScene } from './scenes/intro.js';
+import { GreetingScene } from './scenes/greeting.js';
+import { PasswordScene } from './scenes/password.js';
 import { el, rand } from './utils.js';
 
 function buildCloudLayer(container, src, count, duration, opacity, widthPx) {
@@ -41,6 +43,7 @@ async function boot() {
   const stage = document.getElementById('stage');
   const stageInner = document.getElementById('stage-inner');
   const character = document.getElementById('character');
+  const characterBoy = document.getElementById('character-boy');
   const sceneUI = document.getElementById('scene-ui');
   const starsLayer = document.getElementById('stars-layer');
   const heartsLayer = document.getElementById('hearts-layer');
@@ -76,20 +79,40 @@ async function boot() {
     transformOrigin: '50% 100%',
   });
 
+  // boy idle loop — same treatment, runs harmlessly while opacity:0 until a scene shows him
+  gsap.to(characterBoy, {
+    y: -2,
+    duration: 2.2,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut',
+    delay: 0.3,
+  });
+  gsap.to(characterBoy, {
+    rotate: -0.6,
+    duration: 3.2,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut',
+    transformOrigin: '50% 100%',
+  });
+
   const context = {
-    audio, particles, camera, stage, sceneUI, character,
+    audio, particles, camera, stage, sceneUI, character, characterBoy,
     starsLayer, heartsLayer, sparkleLayer,
     onMissingScene: (id) => showMissingScenePlaceholder(sceneUI, id),
   };
   const sceneManager = new SceneManager(context);
   context.sceneManager = sceneManager;
 
+  sceneManager.register('greeting', GreetingScene);
+  sceneManager.register('password', PasswordScene);
   sceneManager.register('intro', IntroScene);
   // scenes/letter.js, gift.js, console.js, ending.js register here as they're built
 
   stage.classList.add('is-ready');
   audio.playMusic();
-  await sceneManager.transitionTo('intro');
+  await sceneManager.transitionTo('greeting');
 }
 
 boot();
