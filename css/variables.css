@@ -1,0 +1,23 @@
+:root {
+  /* palette — pastel sunset language from the spec (Part 5) */
+  --color-lavender: #C9B6E4;
+  --color-pink: #F4B6C2;
+  --color-pink-deep: #E98AA5;
+  --color-cream: #FCEFDD;
+  --color-peach: #F6CBA6;
+  --color-sky-blue: #BFD7EA;
+  --color-ink: #3D2D29;      /* "black" -> warm dark brown */
+  --color-paper: #FFF8EF;    /* "white" -> warm white */
+  --color-shadow: #8E6A9C;   /* shadows -> purple, not gray */
+
+  /* fonts */
+  --font-display: 'Pixelify Sans', 'Press Start 2P', monospace;
+  --font-body: 'VT323', monospace;
+
+  /* stage */
+  --stage-max-width: 960px;
+  --stage-aspect: 16 / 10;
+
+  /* motion (durations mirrored in JS where GSAP needs the same numbers) */
+  --ease-back-out: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
