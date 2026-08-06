@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=VT323&display=swap');
+
+html, body {
+  background: var(--color-ink);
+  overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* true native-resolution pixel sprites (particles, UI frames) stay crisp when scaled */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* the approved character art is higher-resolution source art, not a tiny native
+   grid — it scales smoothly rather than blocky, per how it was supplied */
+.smooth-scale {
+  image-rendering: auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}

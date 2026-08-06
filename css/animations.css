@@ -1,0 +1,8 @@
+@keyframes stageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+#stage.is-ready {
+  animation: stageFadeIn 500ms ease-out forwards;
+}

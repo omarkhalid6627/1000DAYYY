@@ -1,0 +1,14 @@
+/* Desktop is the default (centered stage, see layout.css). */
+
+/* Tablet */
+@media (max-width: 900px) {
+  #stage { max-width: 92vw; }
+}
+
+/* Phone — rearrange vertically: character shrinks and moves up slightly so
+   the dialogue/interaction area always has room and buttons stay reachable */
+@media (max-width: 600px) {
+  #stage { aspect-ratio: 3 / 4; max-width: 100vw; }
+  #character { left: 50%; bottom: auto; top: 6%; height: 30%; transform: translateX(-50%); }
+  #scene-ui { top: 34%; }
+}

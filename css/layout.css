@@ -1,0 +1,77 @@
+#stage {
+  position: relative;
+  width: 100%;
+  max-width: var(--stage-max-width);
+  aspect-ratio: var(--stage-aspect);
+  overflow: hidden;
+  opacity: 0; /* faded in by main.js on load */
+}
+
+#stage-inner {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 60%; /* camera zoom/shake pivot */
+}
+
+/* ---------- background layers (always-on, live in main.js) ---------- */
+#sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(to bottom,
+    var(--color-lavender) 0%,
+    var(--color-pink) 55%,
+    var(--color-cream) 100%);
+}
+
+.cloud-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#clouds-back { z-index: 1; }
+#clouds-mid { z-index: 2; }
+#clouds-front { z-index: 3; }
+
+.cloud-sprite {
+  position: absolute;
+  will-change: transform;
+}
+
+#stars-layer { z-index: 1; position: absolute; inset: 0; pointer-events: none; }
+#hearts-layer { z-index: 4; position: absolute; inset: 0; pointer-events: none; }
+#sparkle-layer { z-index: 6; position: absolute; inset: 0; pointer-events: none; }
+
+.star-sprite, .heart-sprite, .sparkle-sprite {
+  position: absolute;
+  will-change: transform, opacity;
+}
+
+/* ---------- character ---------- */
+#character {
+  position: absolute;
+  left: 4%;
+  bottom: 6%;
+  height: 46%;
+  z-index: 5;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+#character img {
+  height: 100%;
+  width: auto;
+  filter: drop-shadow(0 6px 3px rgba(61, 45, 41, 0.25));
+}
+
+/* ---------- scene UI (scene-specific content mounts here) ---------- */
+#scene-ui {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+}
+
+#scene-ui > * {
+  pointer-events: auto;
+}
