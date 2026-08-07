@@ -9,6 +9,12 @@
    the dialogue/interaction area always has room and buttons stay reachable */
 @media (max-width: 600px) {
   #stage { aspect-ratio: 3 / 4; max-width: 100vw; }
-  #character { left: 50%; bottom: auto; top: 6%; height: 30%; transform: translateX(-50%); }
-  #scene-ui { top: 34%; }
+
+  .char-pos-solo-left, .char-pos-solo-center {
+    left: 50%; bottom: auto; top: 4%; height: 26%;
+  }
+  .char-pos-duo-a { left: 30%; bottom: auto; top: 4%; height: 24%; }
+  .char-pos-duo-b { left: 56%; bottom: auto; top: 4%; height: 24%; }
+
+  #scene-ui { top: 30%; }
 }

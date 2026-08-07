@@ -10,19 +10,13 @@ export const PasswordScene = {
     this.entered = '';
     const { character, characterBoy } = ctx;
 
-    // --- couple display -----------------------------------------------
-    // Built as two positioned sprites for now. If ctx.assets?.coupleHug is
-    // ever set to a single combined image path, swap to that image alone
-    // here without touching anything else in this scene.
-    const coupleHugSrc = ctx.assets?.coupleHug;
-    if (coupleHugSrc) {
-      gsap.set(character, { opacity: 0 });
-      gsap.set(characterBoy, { opacity: 1, x: 0, y: 0, rotate: 0, scale: 1, left: '4%', height: '46%' });
-      characterBoy.querySelector('img').src = coupleHugSrc;
-    } else {
-      gsap.set(character, { opacity: 1, x: 0, y: 0, rotate: 0, scale: 1, left: '2%', height: '44%' });
-      gsap.set(characterBoy, { opacity: 1, x: 0, y: 0, rotate: 0, scale: 1, left: '15%', height: '44%' });
-    }
+    // --- couple display: uploaded hugging illustration, shown via the
+    // boy slot as a single image (girl slot hidden) -------------------
+    gsap.set(character, { opacity: 0 });
+    characterBoy.className = 'char-pos-solo-center';
+    characterBoy.querySelector('img').src = 'assets/sprites/characters/couple-hug.png';
+    gsap.set(characterBoy, { opacity: 0, x: 0, y: 16, rotate: 0, scale: 0.92, xPercent: -50 });
+    gsap.to(characterBoy, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.6)', delay: 0.1 });
 
     const wrap = document.createElement('div');
     wrap.className = 'password-wrap';
@@ -134,9 +128,9 @@ export const PasswordScene = {
     // all six slots bounce
     tl.to(this.elements.slots, { y: -10, duration: 0.15, ease: 'power1.out', stagger: 0.04 }, 0)
       .to(this.elements.slots, { y: 0, duration: 0.2, ease: 'bounce.out', stagger: 0.04 }, 0.15)
-      // subtle celebratory bounce for the couple
-      .to([character, characterBoy], { y: -8, duration: 0.18, ease: 'power1.out' }, 0.1)
-      .to([character, characterBoy], { y: 0, duration: 0.25, ease: 'bounce.out' }, 0.28);
+      // subtle celebratory bounce for the couple image
+      .to(characterBoy, { y: -8, duration: 0.18, ease: 'power1.out' }, 0.1)
+      .to(characterBoy, { y: 0, duration: 0.25, ease: 'bounce.out' }, 0.28);
 
     const rect = this.elements.panel.getBoundingClientRect();
     const stageRect = this.ctx.stage.getBoundingClientRect();

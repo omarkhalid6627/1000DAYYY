@@ -9,7 +9,9 @@ export const EndingScene = {
     const { character, characterBoy } = ctx;
 
     gsap.set(characterBoy, { opacity: 0 });
-    gsap.set(character, { opacity: 0, y: 12, scale: 0.92, x: 0, rotate: 0, left: '50%', height: '46%', xPercent: -50 });
+    character.className = 'char-pos-solo-center';
+    character.querySelector('img').src = 'assets/sprites/characters/girl.png';
+    gsap.set(character, { opacity: 0, y: 12, scale: 0.92, x: 0, rotate: 0, xPercent: -50 });
 
     const wrap = document.createElement('div');
     wrap.style.cssText = 'position:absolute; left:50%; top:14%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:16px; width:min(80%,460px);';

@@ -8,9 +8,10 @@ export const GreetingScene = {
 
     // ONLY the boy — girl stays hidden for this scene
     gsap.set(character, { opacity: 0 });
+    characterBoy.className = 'char-pos-solo-center';
+    characterBoy.querySelector('img').src = 'assets/sprites/characters/boy.png';
     gsap.set(characterBoy, {
-      opacity: 0, x: 0, y: 20, rotate: 0, scale: 0.9,
-      left: '50%', height: '48%', xPercent: -50,
+      opacity: 0, x: 0, y: 20, rotate: 0, scale: 0.9, xPercent: -50,
     });
 
     const title = document.createElement('div');

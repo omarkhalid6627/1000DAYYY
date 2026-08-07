@@ -48,40 +48,29 @@
 }
 
 /* ---------- character ---------- */
-#character {
+#character, #character-boy {
   position: absolute;
-  left: 4%;
   bottom: 6%;
-  height: 46%;
   z-index: 5;
   transform-origin: 50% 100%;
   will-change: transform;
 }
+#character-boy { opacity: 0; pointer-events: none; }
 
-#character img {
+#character img, #character-boy img {
   height: 100%;
   width: auto;
+  max-width: none;
+  object-fit: contain;
   filter: drop-shadow(0 6px 3px rgba(61, 45, 41, 0.25));
 }
 
-/* boy sprite: same treatment as #character, position/visibility set per-scene in JS */
-#character-boy {
-  position: absolute;
-  left: 4%;
-  bottom: 6%;
-  height: 46%;
-  z-index: 5;
-  transform-origin: 50% 100%;
-  will-change: transform;
-  opacity: 0;
-  pointer-events: none;
-}
-
-#character-boy img {
-  height: 100%;
-  width: auto;
-  filter: drop-shadow(0 6px 3px rgba(61, 45, 41, 0.25));
-}
+/* positioning presets — scenes toggle these classes rather than setting
+   left/height inline, so the mobile overrides below always apply */
+.char-pos-solo-left  { left: 6%;  height: 44%; }
+.char-pos-solo-center{ left: 50%; height: 46%; }
+.char-pos-duo-a       { left: 4%;  height: 42%; }
+.char-pos-duo-b       { left: 26%; height: 42%; }
 
 /* ---------- pixel keypad (password scene) ---------- */
 .keypad {
@@ -196,6 +185,17 @@
 .gift-box--message{ background: var(--color-pink);    border-image-source: url('../assets/sprites/ui/button-pink-9slice.png'); }
 
 .gift-box.is-opened { opacity: 0.45; pointer-events: none; }
+
+.gift-box-img {
+  width: clamp(72px, 14vw, 108px);
+  height: clamp(72px, 14vw, 108px);
+  display: flex; align-items: center; justify-content: center;
+}
+.gift-box-img img {
+  width: 100%; height: 100%; object-fit: contain;
+  filter: drop-shadow(2px 4px 0 rgba(61,45,41,0.2));
+}
+.gift-box-img.is-opened { opacity: 0.4; pointer-events: none; }
 
 /* ---------- content overlay (letter / photos / song) ---------- */
 .content-overlay {

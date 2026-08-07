@@ -8,6 +8,9 @@ import { PasswordScene } from './scenes/password.js';
 import { GiftScene } from './scenes/gift.js';
 import { SurpriseScene } from './scenes/surprise.js';
 import { EndingScene } from './scenes/ending.js';
+import { LetterScene } from './scenes/letter.js';
+import { PhotosScene } from './scenes/photos.js';
+import { SongScene } from './scenes/song.js';
 import { el, rand } from './utils.js';
 
 function buildCloudLayer(container, src, count, duration, opacity, widthPx) {
@@ -114,6 +117,9 @@ async function boot() {
   sceneManager.register('surprise', SurpriseScene);
   sceneManager.register('gift', GiftScene);
   sceneManager.register('ending', EndingScene);
+  sceneManager.register('letter', LetterScene);
+  sceneManager.register('photos', PhotosScene);
+  sceneManager.register('song', SongScene);
 
   stage.classList.add('is-ready');
   audio.playMusic();

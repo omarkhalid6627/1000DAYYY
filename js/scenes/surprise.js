@@ -9,9 +9,10 @@ export const SurpriseScene = {
     const { character, characterBoy } = ctx;
 
     gsap.set(character, { opacity: 0 });
+    characterBoy.className = 'char-pos-solo-left';
+    characterBoy.querySelector('img').src = 'assets/sprites/characters/boy.png';
     gsap.set(characterBoy, {
       opacity: 0, x: -20, y: 0, rotate: 0, scale: 0.92,
-      left: '4%', height: '46%',
     });
 
     const wrap = document.createElement('div');
