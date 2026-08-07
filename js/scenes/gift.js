@@ -24,8 +24,8 @@ export const GiftScene = {
 
     const title = document.createElement('div');
     title.className = 'pixel-panel';
-    title.style.cssText = 'position:absolute; left:50%; top:8%; transform:translateX(-50%);';
-    title.innerHTML = `<div class="pixel-panel__title" style="font-size:clamp(18px,3.4vw,26px);">CHOOSE YOUR GIFTS</div>`;
+    title.style.cssText = 'position:absolute; left:50%; top:8%; transform:translateX(-50%); opacity:0;';
+    title.innerHTML = `<div class="pixel-panel__title" id="gift-title" style="font-size:clamp(18px,3.4vw,26px); min-height:1em;"></div>`;
 
     const row = document.createElement('div');
     row.className = 'gift-row';
@@ -48,14 +48,42 @@ export const GiftScene = {
 
     this.elements = { root, title, row, boxes: [...row.querySelectorAll('.gift-box')] };
 
-    gsap.set(title, { opacity: 0, y: -20 });
-    gsap.to(title, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.6)' });
-
+    // boxes enter first, staggered, each with a slightly different landing feel
+    const enterTl = gsap.timeline({
+      onComplete: () => this.revealTitle('CHOOSE YOUR GIFT'),
+    });
     this.elements.boxes.forEach((box, i) => {
-      gsap.set(box, { y: -150, opacity: 0 });
+      gsap.set(box, { y: -150, opacity: 0, rotate: (i - 1) * 6 });
+      enterTl.to(box, {
+        y: 0, opacity: 1, rotate: 0, duration: 0.6, ease: 'bounce.out',
+      }, i * 0.22);
+    });
+    enterTl.add(() => this.startIdleFloats(), '+=0.1');
+  },
+
+  revealTitle(text) {
+    const { audio } = this.ctx;
+    const { title } = this.elements;
+    gsap.to(title, { opacity: 1, duration: 0.3 });
+    const el = title.querySelector('#gift-title');
+    let i = 0;
+    const step = () => {
+      if (i >= text.length) return;
+      el.textContent = text.slice(0, i + 1);
+      if (text[i] !== ' ') audio.playSFX('typeKey');
+      i++;
+      this._titleTimer = setTimeout(step, 45);
+    };
+    step();
+  },
+
+  startIdleFloats() {
+    this.elements.boxes.forEach((box, i) => {
       gsap.to(box, {
-        y: 0, opacity: 1, duration: 0.6, ease: 'bounce.out',
-        delay: 0.2 + i * 0.2,
+        y: -6, duration: 1.6 + i * 0.3, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: i * 0.2,
+      });
+      gsap.to(box, {
+        rotate: i % 2 === 0 ? 3 : -3, duration: 2.2 + i * 0.2, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: i * 0.3,
       });
     });
   },
@@ -88,13 +116,24 @@ export const GiftScene = {
     audio.playSFX('giftOpen');
     this.ctx.camera.shake(3, 0.12);
     particles.burst(xPct, yPct, 10, this.ctx.sparkleLayer, 'assets/sprites/particles/heart.png');
-    gsap.to(box, { scale: 0, duration: 0.25, ease: 'power1.in' });
+    gsap.killTweensOf(box);
+    gsap.timeline()
+      .to(box, { scale: 1.15, rotate: 0, duration: 0.1, ease: 'power1.out' })
+      .to(box, { x: -4, duration: 0.05 })
+      .to(box, { x: 4, duration: 0.05 })
+      .to(box, { x: 0, scale: 0, duration: 0.2, ease: 'power1.in' });
 
     this.opened[type] = true;
     box.classList.add('is-opened');
 
     const openers = { message: () => this.showMessage(), photos: () => this.showPhotos(), song: () => this.showSong() };
-    setTimeout(openers[type], 200);
+    setTimeout(openers[type], 300);
+  },
+
+  checkAllOpened() {
+    if (this.opened.message && this.opened.photos && this.opened.song) {
+      setTimeout(() => this.ctx.sceneManager.transitionTo('ending'), 600);
+    }
   },
 
   closeOverlay() {
@@ -107,6 +146,7 @@ export const GiftScene = {
         this.elements.overlay = null;
         const box = this.elements.boxes.find((b) => b.dataset.type === this.elements.overlayType);
         if (box) gsap.to(box, { scale: 1, duration: 0.3, ease: 'back.out(1.5)' });
+        this.checkAllOpened();
       },
     });
   },
@@ -132,8 +172,9 @@ export const GiftScene = {
   showMessage() {
     const { audio } = this.ctx;
     const overlay = this.buildOverlay('message', `
-      <div style="position:relative; display:flex; align-items:center; justify-content:center;">
-        <div class="envelope" id="gift-envelope">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:18px;">
+        <div class="pixel-panel__title" id="letter-title" style="font-size:clamp(16px,3vw,22px); min-height:1.3em;"></div>
+        <div class="envelope" id="gift-envelope" style="opacity:0;">
           <div class="envelope-seal">
             <svg viewBox="0 0 12 10" width="26" height="22"><path d="M6 9 L1 3 Q1 1 3 1 Q6 1 6 4 Q6 1 9 1 Q11 1 11 3 Z" fill="#E98AA5" stroke="#3D2D29" stroke-width="0.6"/></svg>
           </div>
@@ -141,9 +182,28 @@ export const GiftScene = {
       </div>
     `);
 
+    const titleEl = overlay.querySelector('#letter-title');
     const envelope = overlay.querySelector('#gift-envelope');
+    const heading = 'A Letter For You';
+    let i = 0;
+    const typeTitle = () => {
+      if (i >= heading.length) {
+        gsap.to(envelope, { opacity: 1, duration: 0.3 });
+        this.openEnvelope(overlay, envelope);
+        return;
+      }
+      titleEl.textContent = heading.slice(0, i + 1);
+      if (heading[i] !== ' ') audio.playSFX('typeKey');
+      i++;
+      this._typeTimer = setTimeout(typeTitle, 45);
+    };
+    setTimeout(typeTitle, 300);
+  },
+
+  openEnvelope(overlay, envelope) {
+    const { audio } = this.ctx;
     gsap.set(envelope, { y: 60, scale: 0.9 });
-    const openTl = gsap.timeline({ delay: 0.3 });
+    const openTl = gsap.timeline({ delay: 0.2 });
     openTl
       .to(envelope, { y: 0, scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.6)' })
       .to({}, { duration: 0.4 })
@@ -155,8 +215,8 @@ export const GiftScene = {
         letter.style.opacity = 0;
         overlay.querySelector('div').appendChild(letter);
         gsap.to(envelope, { opacity: 0, y: -10, duration: 0.3 });
-        gsap.to(letter, {
-          opacity: 1, duration: 0.6, ease: 'power1.out',
+        gsap.fromTo(letter, { scale: 0.9 }, {
+          opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.4)',
           onComplete: () => this.typewrite(letter, PLACEHOLDER_LETTER),
         });
       });
@@ -207,10 +267,12 @@ export const GiftScene = {
 
   destroy() {
     clearTimeout(this._typeTimer);
+    clearTimeout(this._titleTimer);
     this.elements.boxes?.forEach((box) => {
       box.removeEventListener('pointerenter', this._onEnter);
       box.removeEventListener('pointerleave', this._onLeave);
       box.removeEventListener('click', this._onClick);
+      gsap.killTweensOf(box);
     });
     this.timeline?.kill();
   },

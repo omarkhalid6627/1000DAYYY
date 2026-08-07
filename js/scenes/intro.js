@@ -20,8 +20,8 @@ export const IntroScene = {
     const panel = document.createElement('div');
     panel.className = 'pixel-panel';
     panel.innerHTML = `
-      <div class="pixel-panel__title">WELCOME!!</div>
-      <div class="pixel-panel__subtitle">PRESS START</div>
+      <div class="pixel-panel__title">HAPPY BIRTHDAY,</div>
+      <div class="pixel-panel__title">LOVE!</div>
     `;
 
     const button = document.createElement('button');
@@ -39,7 +39,14 @@ export const IntroScene = {
     gsap.set(panel, { opacity: 0, scale: 0.8, transformOrigin: '50% 50%' });
     gsap.to(panel, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)', delay: 0.15 });
     gsap.set(button, { opacity: 0, y: 8 });
-    gsap.to(button, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.7)', delay: 0.45 });
+    gsap.to(button, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.7)', delay: 0.45,
+      onComplete: () => {
+        // gentle idle float + scale pulse while waiting for a press
+        this._idleTween = gsap.to(button, {
+          y: -4, scale: 1.03, duration: 1.1, repeat: -1, yoyo: true, ease: 'sine.inOut',
+        });
+      },
+    });
   },
 
   play() {
@@ -67,6 +74,8 @@ export const IntroScene = {
     const { audio, particles, camera, character } = this.ctx;
 
     audio.playSFX('click');
+    this._idleTween?.kill();
+    gsap.set(button, { y: 0, scale: 1 });
 
     // click squash: 108% -> 95% -> 100%, moves down 2px
     const clickTl = gsap.timeline();
@@ -91,7 +100,7 @@ export const IntroScene = {
       const { camera, character, particles, sceneManager } = this.ctx;
       const tl = gsap.timeline({
         onComplete: () => {
-          sceneManager.transitionTo('gift');
+          sceneManager.transitionTo('surprise');
           resolve();
         },
       });
@@ -118,6 +127,7 @@ export const IntroScene = {
       button.removeEventListener('click', this._onClick);
     }
     this.timeline?.kill();
+    this._idleTween?.kill();
     this._started = false;
   },
 

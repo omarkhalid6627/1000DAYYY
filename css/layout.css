@@ -105,18 +105,40 @@
   min-height: 1.4em;
 }
 
+.pw-slots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.pw-slot {
+  width: clamp(24px, 6vw, 32px);
+  height: clamp(30px, 7vw, 38px);
+  background: var(--color-paper);
+  border: 3px solid var(--color-ink);
+  box-shadow: inset 0 2px 0 rgba(61,45,41,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: clamp(14px, 3vw, 18px);
+  color: var(--color-ink);
+}
+
+.pw-slot.is-filled {
+  background: var(--color-pink);
+}
+
 .keypad-key {
   aspect-ratio: 1;
   border-style: solid;
   border-width: 6px;
-  border-image-source: url('../assets/sprites/ui/button-cream-9slice.png');
+  border-image-source: url('../assets/sprites/ui/button-pink-9slice.png');
   border-image-slice: 8;
   border-image-repeat: stretch;
-  background: var(--color-cream);
+  background: var(--color-pink);
   image-rendering: pixelated;
   font-family: var(--font-display);
   font-size: 18px;
-  color: var(--color-ink);
+  color: var(--color-paper);
   display: flex;
   align-items: center;
   justify-content: center;
