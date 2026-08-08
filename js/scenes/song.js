@@ -12,22 +12,42 @@ export const SongScene = {
 
     const root = document.createElement('div');
     root.style.cssText = `
-      position: absolute; inset: 0;
-      background: linear-gradient(180deg, #B8A6DA, var(--color-lavender) 60%, #9A7FC4);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0;
+      position: absolute; inset: 0; overflow: hidden;
+      background: linear-gradient(180deg, #B8A6DA 0%, var(--color-lavender) 55%, #9A7FC4 100%);
+      opacity: 0; z-index: 5;
     `;
 
-    root.innerHTML = `
-      <div style="display:flex; flex-direction:column; align-items:center; gap:18px;">
-        <div class="player-panel" id="song-panel" style="opacity:0; transform:scale(0.8);">
-          <div class="player-disc" id="song-disc"></div>
-          <div>
-            <div class="pixel-panel__title" style="font-size:18px; -webkit-text-stroke-width:2px;">SONG FOR YOU</div>
-            <div style="font-family:var(--font-body); font-size:14px; margin-top:8px; color:var(--color-ink);">
-              [drop your song file in assets/audio/music/ and I'll wire up playback]
+    const decoLayer = document.createElement('div');
+    decoLayer.style.cssText = 'position:absolute; inset:0; pointer-events:none; z-index:1;';
+    root.appendChild(decoLayer);
+
+    // a few soft static clouds low in the layer for depth
+    for (let i = 0; i < 3; i++) {
+      const c = document.createElement('img');
+      c.src = 'assets/sprites/backgrounds/cloud-mid.png';
+      c.className = 'pixelated';
+      c.style.cssText = `position:absolute; left:${10 + i * 32}%; top:${8 + (i % 2) * 10}%; width:64px; opacity:0.5;`;
+      decoLayer.appendChild(c);
+    }
+
+    const heading = document.createElement('div');
+    heading.className = 'pixel-panel';
+    heading.style.cssText = 'position:absolute; left:50%; top:6%; transform:translateX(-50%); opacity:0; z-index:5;';
+    heading.innerHTML = '<div class="pixel-panel__title" style="font-size:clamp(16px,3vw,22px);">SONG FOR YOU</div>';
+
+    const centerWrap = document.createElement('div');
+    centerWrap.style.cssText = 'position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:5; pointer-events:none;';
+    centerWrap.innerHTML = `
+      <div style="display:flex; flex-direction:column; align-items:center; gap:16px; pointer-events:auto;">
+        <div class="player-panel" id="song-panel" style="opacity:0; transform:scale(0.8); flex-direction:column; gap:14px;">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div class="player-disc" id="song-disc"></div>
+            <div>
+              <div style="font-family:var(--font-body); font-size:15px; color:var(--color-ink);">Khalik Ma'aya</div>
+              <div style="font-family:var(--font-body); font-size:12px; color:var(--color-shadow);">Amr Diab</div>
             </div>
           </div>
+          <button class="pixel-button" id="song-playpause" style="align-self:center; padding:8px 22px; font-size:14px;">\u25b6 PLAY</button>
         </div>
         <svg width="46" height="46" viewBox="0 0 16 16" id="song-mascot" style="opacity:0;">
           <circle cx="8" cy="9" r="6.5" fill="#F4B6C2" stroke="#3D2D29" stroke-width="0.8"/>
@@ -45,68 +65,124 @@ export const SongScene = {
 
     const backBtn = document.createElement('button');
     backBtn.className = 'pixel-button';
-    backBtn.textContent = '← BACK';
+    backBtn.textContent = '\u2190 BACK';
     backBtn.style.cssText = 'position:absolute; left:50%; bottom:6%; transform:translateX(-50%); opacity:0; pointer-events:none; z-index:50;';
+
+    const audioEl = document.createElement('audio');
+    audioEl.src = 'assets/audio/music/song-for-you.mp3';
+    audioEl.preload = 'none';
 
     ctx.sceneUI.appendChild(blackout);
     ctx.sceneUI.appendChild(root);
+    ctx.sceneUI.appendChild(heading);
+    ctx.sceneUI.appendChild(centerWrap);
     ctx.sceneUI.appendChild(backBtn);
+    ctx.sceneUI.appendChild(audioEl);
+
     this.elements = {
-      root, blackout, backBtn,
-      panel: root.querySelector('#song-panel'),
-      disc: root.querySelector('#song-disc'),
-      mascot: root.querySelector('#song-mascot'),
+      root, blackout, backBtn, heading, decoLayer, audioEl,
+      panel: centerWrap.querySelector('#song-panel'),
+      disc: centerWrap.querySelector('#song-disc'),
+      mascot: centerWrap.querySelector('#song-mascot'),
+      playBtn: centerWrap.querySelector('#song-playpause'),
     };
 
-    // unique transition-in: power-on fade-through-black
     const tl = gsap.timeline();
-    tl.to(blackout, { opacity: 0, duration: 0.5, delay: 0.25, ease: 'power1.inOut' }, 0)
+    tl.to(blackout, { opacity: 0, duration: 0.5, delay: 0.25, ease: 'power1.inOut',
+      onComplete: () => { blackout.style.pointerEvents = 'none'; } }, 0)
       .to(root, { opacity: 1, duration: 0.4 }, 0.15)
+      .to(heading, { opacity: 1, duration: 0.3 }, 0.4)
       .to(this.elements.panel, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, 0.5)
       .to(this.elements.mascot, { opacity: 1, y: -4, duration: 0.4, ease: 'back.out(2)' }, 0.75)
       .add(() => {
-        gsap.to(this.elements.disc, { rotate: 360, duration: 4, repeat: -1, ease: 'none' });
         gsap.to(this.elements.mascot, { y: '+=4', duration: 1.4, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        this.startAmbientNotes();
         this.elements.backBtn.style.pointerEvents = 'auto';
         gsap.to(this.elements.backBtn, { opacity: 1, duration: 0.4 });
       }, 0.9);
     this.timeline = tl;
   },
 
+  startAmbientNotes() {
+    this._ambientTimer = setInterval(() => {
+      const symbols = ['\u2669', '\u266a', '\u266b'];
+      const note = document.createElement('div');
+      note.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      note.style.cssText = `
+        position:absolute; left:${10 + Math.random() * 80}%; top:85%;
+        color:rgba(255,248,239,0.8); font-size:${16 + Math.random() * 10}px; z-index:2;
+      `;
+      this.elements.decoLayer.appendChild(note);
+      gsap.to(note, {
+        y: '-=260', x: `+=${Math.random() > 0.5 ? 30 : -30}`, opacity: 0, rotate: Math.random() * 40 - 20,
+        duration: 4, ease: 'power1.out', onComplete: () => note.remove(),
+      });
+    }, 900);
+  },
+
   play() {
-    const { backBtn } = this.elements;
+    const { backBtn, playBtn, audioEl, disc } = this.elements;
     const { audio } = this.ctx;
-    this._onEnter = () => { audio.playSFX('hover'); gsap.to(backBtn, { scale: 1.06, duration: 0.18 }); };
-    this._onLeave = () => gsap.to(backBtn, { scale: 1, duration: 0.18 });
-    this._onClick = () => this.goBack();
-    backBtn.addEventListener('pointerenter', this._onEnter);
-    backBtn.addEventListener('pointerleave', this._onLeave);
-    backBtn.addEventListener('click', this._onClick);
+
+    this._onBackEnter = () => { audio.playSFX('hover'); gsap.to(backBtn, { scale: 1.06, duration: 0.18 }); };
+    this._onBackLeave = () => gsap.to(backBtn, { scale: 1, duration: 0.18 });
+    this._onBackClick = () => this.goBack();
+    backBtn.addEventListener('pointerenter', this._onBackEnter);
+    backBtn.addEventListener('pointerleave', this._onBackLeave);
+    backBtn.addEventListener('click', this._onBackClick);
+
+    this._discSpin = null;
+    this._onPlayClick = () => {
+      audio.playSFX('click');
+      if (audioEl.paused) {
+        audioEl.play().catch(() => {});
+        playBtn.textContent = '\u23f8 PAUSE';
+        this._discSpin = gsap.to(disc, { rotate: '+=360', duration: 4, repeat: -1, ease: 'none' });
+      } else {
+        audioEl.pause();
+        playBtn.textContent = '\u25b6 PLAY';
+        this._discSpin?.pause();
+      }
+    };
+    playBtn.addEventListener('click', this._onPlayClick);
+    audioEl.addEventListener('ended', () => {
+      playBtn.textContent = '\u25b6 PLAY';
+      this._discSpin?.pause();
+    });
   },
 
   goBack() {
     const { audio } = this.ctx;
     audio.playSFX('click');
+    this.elements.audioEl.pause();
+    clearInterval(this._ambientTimer);
     const tl = gsap.timeline({ onComplete: () => this.ctx.sceneManager.transitionTo('gift') });
-    tl.to(this.elements.blackout, { opacity: 1, duration: 0.4, ease: 'power1.inOut' }, 0)
-      .to(this.elements.backBtn, { opacity: 0, duration: 0.2 }, 0);
+    tl.to(this.elements.blackout, { opacity: 1, pointerEvents: 'auto', duration: 0.4, ease: 'power1.inOut' }, 0)
+      .to([this.elements.backBtn, this.elements.heading, this.elements.panel, this.elements.mascot],
+          { opacity: 0, duration: 0.2 }, 0);
     this.timeline = tl;
   },
 
-  pause() { this.timeline?.pause(); },
+  pause() { this.timeline?.pause(); this.elements.audioEl?.pause(); },
 
   destroy() {
-    const { backBtn, root, blackout } = this.elements;
+    clearInterval(this._ambientTimer);
+    const { backBtn, playBtn, root, blackout, heading, audioEl } = this.elements;
     if (backBtn) {
-      backBtn.removeEventListener('pointerenter', this._onEnter);
-      backBtn.removeEventListener('pointerleave', this._onLeave);
-      backBtn.removeEventListener('click', this._onClick);
+      backBtn.removeEventListener('pointerenter', this._onBackEnter);
+      backBtn.removeEventListener('pointerleave', this._onBackLeave);
+      backBtn.removeEventListener('click', this._onBackClick);
       backBtn.remove();
     }
+    playBtn?.removeEventListener('click', this._onPlayClick);
+    audioEl?.pause();
+    audioEl?.remove();
     gsap.killTweensOf(this.elements.disc);
     gsap.killTweensOf(this.elements.mascot);
+    this._discSpin?.kill();
     root?.remove();
     blackout?.remove();
+    heading?.remove();
     this.timeline?.kill();
   },
 

@@ -55,7 +55,10 @@ export const EndingScene = {
     particles.burst(50, 60, 10, this.ctx.sparkleLayer, 'assets/sprites/particles/sparkle.png');
     await new Promise((r) => setTimeout(r, 300));
     const tl = gsap.timeline({
-      onComplete: () => this.ctx.sceneManager.transitionTo('greeting'),
+      onComplete: () => {
+        this.ctx.sceneManager.resetForReplay();
+        this.ctx.sceneManager.transitionTo('greeting');
+      },
     });
     tl.to([this.elements.wrap, this.elements.button], { opacity: 0, duration: 0.4 });
     this.timeline = tl;

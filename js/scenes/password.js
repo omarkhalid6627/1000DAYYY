@@ -180,4 +180,9 @@ export const PasswordScene = {
     await this.init(this.ctx);
     this.play();
   },
+
+  resetState() {
+    this.entered = '';
+    this._locked = false;
+  },
 };

@@ -157,4 +157,8 @@ export const GiftScene = {
     await this.init(this.ctx);
     this.play();
   },
+
+  resetState() {
+    this.opened = null;
+  },
 };

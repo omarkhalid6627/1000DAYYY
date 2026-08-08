@@ -33,4 +33,14 @@ export class SceneManager {
     this.context.sceneUI.innerHTML = '';
     this.currentId = null;
   }
+
+  // Called by the Ending scene's Replay button. Any scene that carries
+  // state across visits (password entry/lock, which gifts are opened,
+  // etc.) implements resetState() to clear it; scenes without persistent
+  // state don't need to implement it.
+  resetForReplay() {
+    for (const scene of this.scenes.values()) {
+      scene.resetState?.();
+    }
+  }
 }
