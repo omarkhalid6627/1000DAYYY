@@ -34,7 +34,7 @@ export const PhotosScene = {
     const backBtn = document.createElement('button');
     backBtn.className = 'pixel-button';
     backBtn.textContent = '← BACK';
-    backBtn.style.cssText = 'position:absolute; left:50%; bottom:5%; transform:translateX(-50%); opacity:0; pointer-events:none;';
+    backBtn.style.cssText = 'position:absolute; left:50%; bottom:5%; transform:translateX(-50%); opacity:0; pointer-events:none; z-index:50;';
 
     root.appendChild(heading);
     root.appendChild(grid);

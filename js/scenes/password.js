@@ -66,6 +66,7 @@ export const PasswordScene = {
   play() {
     const { audio } = this.ctx;
     this._onKeyClick = (e) => {
+      if (this._locked) return;
       const btn = e.currentTarget;
       const k = btn.dataset.key;
       audio.playSFX('hover');
@@ -90,6 +91,7 @@ export const PasswordScene = {
       this.updateSlots();
 
       if (this.entered.length === PASSWORD.length) {
+        this._locked = true;
         this.entered === PASSWORD ? this.handleSuccess() : this.handleWrong();
       }
     };
@@ -113,7 +115,7 @@ export const PasswordScene = {
   handleWrong() {
     const { audio } = this.ctx;
     audio.playSFX('click');
-    const tl = gsap.timeline({ onComplete: () => { this.entered = ''; this.updateSlots(); } });
+    const tl = gsap.timeline({ onComplete: () => { this.entered = ''; this.updateSlots(); this._locked = false; } });
     tl.to(this.elements.slots, { x: -8, duration: 0.06 })
       .to(this.elements.slots, { x: 8, duration: 0.06 })
       .to(this.elements.slots, { x: -6, duration: 0.06 })
@@ -141,7 +143,7 @@ export const PasswordScene = {
     const success = document.createElement('div');
     success.className = 'pixel-panel';
     success.style.cssText = 'position:absolute; left:50%; top:20%; transform:translateX(-50%) scale(0.7); opacity:0;';
-    success.innerHTML = '<div class="pixel-panel__title" style="font-size:clamp(16px,3vw,22px);">\u0634\u0637\u0648\u0648\u0648\u0648\u0648\u0631\u0647 \u2764\ufe0f</div>';
+    success.innerHTML = '<div class="pixel-panel__title" style="font-size:clamp(16px,3vw,22px);">\u0634\u0637\u0648\u0648\u0648\u0648\u0648\u0631\u0647</div>';
     this.ctx.sceneUI.appendChild(success);
     this.elements.success = success;
     gsap.to(success, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)', delay: 0.4 });

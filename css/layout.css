@@ -67,7 +67,7 @@
 
 /* positioning presets — scenes toggle these classes rather than setting
    left/height inline, so the mobile overrides below always apply */
-.char-pos-solo-left  { left: 6%;  height: 44%; }
+.char-pos-solo-left  { left: 11%; height: 44%; }
 .char-pos-solo-center{ left: 50%; height: 46%; }
 .char-pos-duo-a       { left: 4%;  height: 42%; }
 .char-pos-duo-b       { left: 26%; height: 42%; }

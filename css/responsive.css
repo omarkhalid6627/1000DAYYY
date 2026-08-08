@@ -12,8 +12,7 @@
 
   .char-pos-solo-left, .char-pos-solo-center {
     left: 50%; bottom: auto; top: 4%; height: 26%;
-  }
-  .char-pos-duo-a { left: 30%; bottom: auto; top: 4%; height: 24%; }
+  }  .char-pos-duo-a { left: 30%; bottom: auto; top: 4%; height: 24%; }
   .char-pos-duo-b { left: 56%; bottom: auto; top: 4%; height: 24%; }
 
   #scene-ui { top: 30%; }

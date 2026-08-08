@@ -22,7 +22,7 @@ export const IntroScene = {
     const panel = document.createElement('div');
     panel.className = 'pixel-panel';
     panel.innerHTML = `
-      <div class="pixel-panel__title" style="font-size:clamp(13px,2.6vw,18px); line-height:1.3; white-space:normal;">Happy 1000 day together my lil prof princess\u2764\ufe0f\u2764\ufe0f</div>
+      <div class="pixel-panel__title" style="font-size:clamp(13px,2.6vw,18px); line-height:1.3; white-space:normal;">Happy 1000 day together my lil prof princess \u2764\ufe0f\u2764\ufe0f</div>
     `;
 
     const button = document.createElement('button');

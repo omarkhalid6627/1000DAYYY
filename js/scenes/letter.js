@@ -31,17 +31,17 @@ export const LetterScene = {
     const paperText = document.createElement('div');
     paperText.id = 'letter-text';
     paperText.style.cssText = `
-      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.9);
-      width: min(60%, 480px); max-height: 68%; overflow-y: auto;
-      font-family: var(--font-body); font-size: clamp(16px, 2.2vw, 20px);
-      line-height: 1.55; color: #4A3220; text-align: center; opacity: 0;
-      white-space: pre-line;
+      position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%) scale(0.9);
+      width: min(38%, 340px); max-height: 62%; overflow-y: auto;
+      font-family: var(--font-body); font-size: clamp(15px, 2vw, 19px);
+      line-height: 1.5; color: #4A3220; text-align: center; opacity: 0;
+      white-space: pre-line; text-shadow: 0 1px 0 rgba(255,255,255,0.4);
     `;
 
     const backBtn = document.createElement('button');
     backBtn.className = 'pixel-button';
     backBtn.textContent = '← BACK';
-    backBtn.style.cssText = 'position:absolute; left:50%; bottom:6%; transform:translateX(-50%); opacity:0; pointer-events:none;';
+    backBtn.style.cssText = 'position:absolute; left:50%; bottom:6%; transform:translateX(-50%); opacity:0; pointer-events:none; z-index:50;';
 
     root.appendChild(heading);
     root.appendChild(paperText);
