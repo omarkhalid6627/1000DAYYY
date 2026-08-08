@@ -5,7 +5,9 @@ export const SongScene = {
   async init(ctx) {
     this.ctx = ctx;
     gsap.set(ctx.character, { opacity: 0 });
-    gsap.set(ctx.characterBoy, { opacity: 0 });
+    ctx.characterBoy.className = 'char-pos-solo-left';
+    ctx.characterBoy.querySelector('img').src = 'assets/sprites/characters/boy.png';
+    gsap.set(ctx.characterBoy, { opacity: 0, x: 0, y: 10, rotate: 0, scale: 0.9 });
 
     const blackout = document.createElement('div');
     blackout.style.cssText = 'position:absolute; inset:0; background:var(--color-ink); opacity:1; z-index:20;';
@@ -28,6 +30,16 @@ export const SongScene = {
       c.className = 'pixelated';
       c.style.cssText = `position:absolute; left:${10 + i * 32}%; top:${8 + (i % 2) * 10}%; width:64px; opacity:0.5;`;
       decoLayer.appendChild(c);
+    }
+    // twinkling stars scattered through the layer
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement('img');
+      s.src = 'assets/sprites/particles/star.png';
+      s.className = 'pixelated';
+      s.style.cssText = `position:absolute; left:${5 + Math.random() * 90}%; top:${5 + Math.random() * 55}%; width:7px;`;
+      decoLayer.appendChild(s);
+      gsap.set(s, { opacity: 0.3 });
+      gsap.to(s, { opacity: 0.9, duration: 1 + Math.random() * 1.5, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: Math.random() * 3 });
     }
 
     const heading = document.createElement('div');
@@ -94,8 +106,10 @@ export const SongScene = {
       .to(heading, { opacity: 1, duration: 0.3 }, 0.4)
       .to(this.elements.panel, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, 0.5)
       .to(this.elements.mascot, { opacity: 1, y: -4, duration: 0.4, ease: 'back.out(2)' }, 0.75)
+      .to(this.ctx.characterBoy, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.7)' }, 0.8)
       .add(() => {
         gsap.to(this.elements.mascot, { y: '+=4', duration: 1.4, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to(this.ctx.characterBoy, { y: '-=5', duration: 0.9, repeat: -1, yoyo: true, ease: 'sine.inOut' });
         this.startAmbientNotes();
         this.elements.backBtn.style.pointerEvents = 'auto';
         gsap.to(this.elements.backBtn, { opacity: 1, duration: 0.4 });
@@ -159,7 +173,8 @@ export const SongScene = {
     const tl = gsap.timeline({ onComplete: () => this.ctx.sceneManager.transitionTo('gift') });
     tl.to(this.elements.blackout, { opacity: 1, pointerEvents: 'auto', duration: 0.4, ease: 'power1.inOut' }, 0)
       .to([this.elements.backBtn, this.elements.heading, this.elements.panel, this.elements.mascot],
-          { opacity: 0, duration: 0.2 }, 0);
+          { opacity: 0, duration: 0.2 }, 0)
+      .to(this.ctx.characterBoy, { opacity: 0, duration: 0.2 }, 0);
     this.timeline = tl;
   },
 
@@ -179,6 +194,7 @@ export const SongScene = {
     audioEl?.remove();
     gsap.killTweensOf(this.elements.disc);
     gsap.killTweensOf(this.elements.mascot);
+    gsap.killTweensOf(this.ctx.characterBoy);
     this._discSpin?.kill();
     root?.remove();
     blackout?.remove();

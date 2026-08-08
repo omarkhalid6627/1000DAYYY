@@ -31,12 +31,16 @@ export const LetterScene = {
     const paperText = document.createElement('div');
     paperText.id = 'letter-text';
     paperText.style.cssText = `
-      position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%) scale(0.9);
-      width: min(38%, 340px); max-height: 62%; overflow-y: auto;
-      font-family: var(--font-body); font-size: clamp(15px, 2vw, 19px);
-      line-height: 1.5; color: #4A3220; text-align: center; opacity: 0;
+      position: absolute; left: 32%; top: 16%;
+      width: min(37%, 330px); max-height: 74%; overflow-y: auto;
+      font-family: var(--font-body); font-size: clamp(14px, 1.9vw, 18px);
+      line-height: 1.5; color: #4A3220; text-align: left; opacity: 0;
       white-space: pre-line; text-shadow: 0 1px 0 rgba(255,255,255,0.4);
     `;
+
+    const skipHint = document.createElement('div');
+    skipHint.style.cssText = 'position:absolute; left:50%; bottom:2%; transform:translateX(-50%); font-family:var(--font-body); font-size:12px; color:rgba(74,50,32,0.55); opacity:0;';
+    skipHint.textContent = '(tap to skip)';
 
     const backBtn = document.createElement('button');
     backBtn.className = 'pixel-button';
@@ -45,9 +49,14 @@ export const LetterScene = {
 
     root.appendChild(heading);
     root.appendChild(paperText);
+    root.appendChild(skipHint);
     ctx.sceneUI.appendChild(root);
     ctx.sceneUI.appendChild(backBtn);
-    this.elements = { root, heading, paperText, backBtn, headingText: heading.querySelector('#letter-heading') };
+    this.elements = { root, heading, paperText, backBtn, skipHint, headingText: heading.querySelector('#letter-heading') };
+
+    root.style.cursor = 'pointer';
+    this._onRootClick = () => this.skipTyping();
+    root.addEventListener('click', this._onRootClick);
 
     // unique transition-in: zoom + fade, feels like stepping into the scene
     gsap.fromTo(root, { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: 'power2.out' });
@@ -85,7 +94,9 @@ export const LetterScene = {
 
   typewrite(el, text) {
     const { audio } = this.ctx;
+    this._fullText = text;
     let i = 0;
+    gsap.to(this.elements.skipHint, { opacity: 1, duration: 0.3 });
     const step = () => {
       if (i >= text.length) { this.showBack(); return; }
       el.textContent = text.slice(0, i + 1);
@@ -95,11 +106,23 @@ export const LetterScene = {
       const wait = ch === '.' ? 250 : ch === ',' ? 150 : ch === '\n' ? 300 : 32;
       this._typeTimer = setTimeout(step, wait);
     };
+    this._typeStep = step;
     step();
   },
 
+  skipTyping() {
+    if (!this._fullText || this._skipped) return;
+    const el = this.elements.paperText;
+    if (el.textContent.length >= this._fullText.length) return;
+    this._skipped = true;
+    clearTimeout(this._typeTimer);
+    el.textContent = this._fullText;
+    this.showBack();
+  },
+
   showBack() {
-    const { backBtn } = this.elements;
+    const { backBtn, skipHint } = this.elements;
+    gsap.to(skipHint, { opacity: 0, duration: 0.2 });
     backBtn.style.pointerEvents = 'auto';
     gsap.to(backBtn, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.8)' });
   },
@@ -132,6 +155,7 @@ export const LetterScene = {
     clearTimeout(this._timer);
     clearTimeout(this._typeTimer);
     const { backBtn, root } = this.elements;
+    root?.removeEventListener('click', this._onRootClick);
     if (backBtn) {
       backBtn.removeEventListener('pointerenter', this._onEnter);
       backBtn.removeEventListener('pointerleave', this._onLeave);

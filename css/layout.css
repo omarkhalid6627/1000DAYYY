@@ -243,6 +243,10 @@
   box-shadow: 2px 4px 0 rgba(61,45,41,0.2);
   width: clamp(110px, 22vw, 160px);
   transform: rotate(var(--tilt, -3deg));
+  transition: box-shadow 180ms ease;
+}
+.photo-frame:hover {
+  box-shadow: 4px 10px 0 rgba(61,45,41,0.32);
 }
 .photo-frame__inner {
   aspect-ratio: 4/5;

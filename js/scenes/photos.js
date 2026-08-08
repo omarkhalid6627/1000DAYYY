@@ -51,6 +51,23 @@ export const PhotosScene = {
     ctx.sceneUI.appendChild(backBtn);
     this.elements = { root, heading, grid, backBtn, frames: [...grid.querySelectorAll('.photo-frame')], decoBack, decoFront };
 
+    // static corner decorations — original pixel flowers, gently swaying
+    const corners = [
+      { src: 'flower-pink', style: 'left:4%; top:6%; width:26px;' },
+      { src: 'flower-lav', style: 'right:4%; top:6%; width:22px;' },
+      { src: 'flower-lav', style: 'left:6%; bottom:16%; width:24px;' },
+      { src: 'flower-pink', style: 'right:5%; bottom:14%; width:20px;' },
+    ];
+    corners.forEach(({ src, style }, i) => {
+      const f = document.createElement('img');
+      f.src = `assets/sprites/particles/${src}.png`;
+      f.className = 'pixelated';
+      f.style.cssText = `position:absolute; ${style} opacity:0;`;
+      decoBack.appendChild(f);
+      gsap.to(f, { opacity: 0.9, duration: 0.5, delay: 0.3 + i * 0.15 });
+      gsap.to(f, { rotate: i % 2 === 0 ? 10 : -10, duration: 2 + i * 0.3, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 0.8 });
+    });
+
     gsap.to(root, { opacity: 1, duration: 0.4, ease: 'power1.out' });
     gsap.to(heading, { opacity: 1, y: 0, duration: 0.35, ease: 'back.out(1.6)', delay: 0.15 });
 
@@ -76,10 +93,11 @@ export const PhotosScene = {
       const layer = Math.random() > 0.5 ? decoFront : decoBack;
       const x = 5 + Math.random() * 90;
       const el = document.createElement('img');
-      const kind = Math.random() > 0.5 ? 'heart' : 'star';
+      const kinds = ['heart', 'star', 'star', 'flower-pink', 'flower-lav'];
+      const kind = kinds[Math.floor(Math.random() * kinds.length)];
       el.src = `assets/sprites/particles/${kind}.png`;
       el.className = 'pixelated';
-      el.style.cssText = `position:absolute; left:${x}%; top:100%; width:${kind === 'heart' ? 12 : 8}px; opacity:0.8;`;
+      el.style.cssText = `position:absolute; left:${x}%; top:100%; width:${kind.startsWith('flower') ? 14 : kind === 'heart' ? 12 : 8}px; opacity:0.8;`;
       layer.appendChild(el);
       gsap.to(el, {
         y: '-=420', opacity: 0, rotate: Math.random() > 0.5 ? 40 : -40,
