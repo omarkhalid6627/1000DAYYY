@@ -1,5 +1,65 @@
 const PHOTOS = ['assets/photos/photo-1.jpg', 'assets/photos/photo-2.jpg', 'assets/photos/photo-3.jpg'];
 
+// ================================
+// PHOTO GALLERY DECORATIONS
+// Add your own PNG/JPG stickers here. Each one only needs a filename,
+// a position, and a size — everything else (fade-in, gentle floating,
+// slight rotation) happens automatically. You do NOT need to touch
+// anything else in this file or any CSS file to add a sticker.
+//
+//   src     path to your image, e.g. 'assets/sprites/particles/sticker1.png'
+//   left    horizontal position, e.g. '12%'   (from the left edge)
+//   top     vertical position,   e.g. '20%'   (from the top edge)
+//   width   display size,        e.g. '80px'
+//   rotate  optional starting tilt in degrees      (default 0)
+//   delay   optional animation start delay, seconds (default: auto-staggered)
+//   float   optional — set to false for a still, non-animated sticker
+//           (default true — everything floats/sways gently by default)
+//
+// Upload your image into assets/sprites/particles/ first, then add a
+// line here with its filename. That's it — nothing else to edit.
+// ================================
+const PHOTO_GALLERY_DECORATIONS = [
+  { src: 'assets/sprites/particles/flower-pink.png', left: '2%', top: '26%', width: '34px', rotate: -8 },
+  { src: 'assets/sprites/particles/flower-lav.png', left: '94%', top: '24%', width: '30px', rotate: 8 },
+  { src: 'assets/sprites/particles/flower-lav.png', left: '3%', top: '65%', width: '32px', rotate: -6 },
+  { src: 'assets/sprites/particles/flower-pink.png', left: '92%', top: '68%', width: '28px', rotate: 6 },
+  { src: 'assets/sprites/particles/flower-pink.png', left: '8%', top: '13%', width: '22px' },
+  { src: 'assets/sprites/particles/flower-lav.png', left: '88%', top: '13%', width: '22px' },
+
+  // 👇 Add your own stickers below this line, following the same pattern:
+  // { src: 'assets/sprites/particles/my-sticker.png', left: '50%', top: '8%', width: '60px' },
+];
+
+function renderPhotoGalleryDecorations(layer) {
+  return PHOTO_GALLERY_DECORATIONS.map((deco, i) => {
+    const img = document.createElement('img');
+    img.src = deco.src;
+    img.className = 'pixelated';
+    img.style.cssText = `
+      position: absolute; left: ${deco.left}; top: ${deco.top}; width: ${deco.width};
+      opacity: 0; pointer-events: none; transform: rotate(${deco.rotate || 0}deg);
+      max-width: 22vw;
+    `;
+    // if a filename is missing/typo'd, fail quietly instead of showing a broken-image icon
+    img.onerror = () => img.remove();
+    layer.appendChild(img);
+
+    gsap.to(img, { opacity: 1, duration: 0.5, delay: deco.delay ?? 0.3 + i * 0.12, ease: 'power1.out' });
+    if (deco.float !== false) {
+      const base = deco.rotate || 0;
+      gsap.to(img, {
+        rotate: base + (i % 2 === 0 ? 12 : -12),
+        y: '+=6',
+        duration: 2 + (i % 4) * 0.3,
+        repeat: -1, yoyo: true, ease: 'sine.inOut',
+        delay: (deco.delay ?? 0) + 0.5,
+      });
+    }
+    return img;
+  });
+}
+
 export const PhotosScene = {
   timeline: null,
   elements: {},
@@ -51,22 +111,10 @@ export const PhotosScene = {
     ctx.sceneUI.appendChild(backBtn);
     this.elements = { root, heading, grid, backBtn, frames: [...grid.querySelectorAll('.photo-frame')], decoBack, decoFront };
 
-    // static corner decorations — original pixel flowers, gently swaying
-    const corners = [
-      { src: 'flower-pink', style: 'left:4%; top:6%; width:26px;' },
-      { src: 'flower-lav', style: 'right:4%; top:6%; width:22px;' },
-      { src: 'flower-lav', style: 'left:6%; bottom:16%; width:24px;' },
-      { src: 'flower-pink', style: 'right:5%; bottom:14%; width:20px;' },
-    ];
-    corners.forEach(({ src, style }, i) => {
-      const f = document.createElement('img');
-      f.src = `assets/sprites/particles/${src}.png`;
-      f.className = 'pixelated';
-      f.style.cssText = `position:absolute; ${style} opacity:0;`;
-      decoBack.appendChild(f);
-      gsap.to(f, { opacity: 0.9, duration: 0.5, delay: 0.3 + i * 0.15 });
-      gsap.to(f, { rotate: i % 2 === 0 ? 10 : -10, duration: 2 + i * 0.3, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 0.8 });
-    });
+    // decoFront sits above the photos/heading (z-index:6) so stickers are
+    // always visible and never trapped behind another layer; pointer-events
+    // stays "none" on the layer itself so nothing here can block a click.
+    this._decorations = renderPhotoGalleryDecorations(decoFront);
 
     gsap.to(root, { opacity: 1, duration: 0.4, ease: 'power1.out' });
     gsap.to(heading, { opacity: 1, y: 0, duration: 0.35, ease: 'back.out(1.6)', delay: 0.15 });
@@ -162,6 +210,7 @@ export const PhotosScene = {
   destroy() {
     clearInterval(this._ambientTimer);
     const { backBtn, root, frames } = this.elements;
+    this._decorations?.forEach((img) => gsap.killTweensOf(img));
     frames?.forEach((f) => {
       f.removeEventListener('pointerenter', this._onEnter);
       f.removeEventListener('pointerleave', this._onLeave);
