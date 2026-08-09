@@ -33,7 +33,7 @@ const PHOTO_GALLERY_DECORATIONS = [
   { src: 'assets/sprites/particles/deco3.png', left: '4%', top: '55%', width: '80px', rotate: -6 },
   { src: 'assets/sprites/particles/deco4.png', left: '92%', top: '58%', width: '70px', rotate: 8 },
   { src: 'assets/sprites/particles/deco5.png', left: '48%', top: '82%', width: '85px', rotate: -4 },
-
+];
 function renderPhotoGalleryDecorations(layer) {
   return PHOTO_GALLERY_DECORATIONS.map((deco, i) => {
     const img = document.createElement('img');
