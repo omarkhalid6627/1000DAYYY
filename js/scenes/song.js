@@ -55,8 +55,8 @@ export const SongScene = {
           <div style="display:flex; align-items:center; gap:16px;">
             <div class="player-disc" id="song-disc"></div>
             <div>
-              <div style="font-family:var(--font-body); font-size:15px; color:var(--color-ink);">Khalik Ma'aya</div>
-              <div style="font-family:var(--font-body); font-size:12px; color:var(--color-shadow);">Amr Diab</div>
+              <div style="font-family:var(--font-body); font-size:15px; color:var(--color-ink);">Masadaat Etabelna</div>
+              <div style="font-family:var(--font-body); font-size:12px; color:var(--color-shadow);">Ramy Sabry</div>
             </div>
           </div>
           <button class="pixel-button" id="song-playpause" style="align-self:center; padding:8px 22px; font-size:14px;">\u25b6 PLAY</button>

@@ -27,13 +27,10 @@ const PHOTO_GALLERY_DECORATIONS = [
   { src: 'assets/sprites/particles/flower-pink.png', left: '8%', top: '13%', width: '22px' },
   { src: 'assets/sprites/particles/flower-lav.png', left: '88%', top: '13%', width: '22px' },
 
-   // 👇 My photos
-  { src: 'assets/sprites/particles/deco1.png', left: '8%', top: '12%', width: '85px', rotate: -8 },
-  { src: 'assets/sprites/particles/deco2.png', left: '88%', top: '18%', width: '75px', rotate: 7 },
-  { src: 'assets/sprites/particles/deco3.png', left: '4%', top: '55%', width: '80px', rotate: -6 },
-  { src: 'assets/sprites/particles/deco4.png', left: '92%', top: '58%', width: '70px', rotate: 8 },
-  { src: 'assets/sprites/particles/deco5.png', left: '48%', top: '82%', width: '85px', rotate: -4 },
+  // 👇 Add your own stickers below this line, following the same pattern:
+  // { src: 'assets/sprites/particles/my-sticker.png', left: '50%', top: '8%', width: '60px' },
 ];
+
 function renderPhotoGalleryDecorations(layer) {
   return PHOTO_GALLERY_DECORATIONS.map((deco, i) => {
     const img = document.createElement('img');
